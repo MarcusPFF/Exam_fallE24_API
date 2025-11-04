@@ -49,4 +49,9 @@ public class CandidateService {
     public void linkSkill(int candidateId, int skillId) {
         dao.linkSkill(candidateId, skillId);
     }
+
+    //US-4
+    public List<CandidateDTO> getByCategory(app.entities.enums.SkillCategory category) {
+        return DTOMapper.toCandidateDTOs(dao.getBySkillCategory(category));
+    }
 }

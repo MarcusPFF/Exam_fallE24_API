@@ -95,4 +95,17 @@ public class CandidateDAO implements IDAO<Candidate, Integer> {
             em.getTransaction().commit();
         }
     }
+
+    //US-4
+    public List<Candidate> getBySkillCategory(app.entities.enums.SkillCategory category) {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(
+                            "SELECT DISTINCT c FROM Candidate c " +
+                                    "JOIN FETCH c.candidateSkills cs " +
+                                    "JOIN FETCH cs.skill s " +
+                                    "WHERE s.category = :cat", Candidate.class)
+                    .setParameter("cat", category)
+                    .getResultList();
+        }
+    }
 }

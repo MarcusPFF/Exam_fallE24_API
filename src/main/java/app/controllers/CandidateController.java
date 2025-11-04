@@ -17,8 +17,21 @@ public class CandidateController {
         this.skills = new SkillService(emf);
     }
 
+    //US-4
     public Handler list() {
-        return ctx -> ctx.json(candidates.getAll());
+        return ctx -> {
+            String cat = ctx.queryParam("category");
+            if (cat == null || cat.isBlank()) {
+                ctx.json(candidates.getAll());
+                return;
+            }
+            try {
+                var category = app.entities.enums.SkillCategory.valueOf(cat.toUpperCase());
+                ctx.json(candidates.getByCategory(category));
+            } catch (IllegalArgumentException e) {
+                throw new app.exceptions.ApiException(400, "Invalid category");
+            }
+        };
     }
 
     public Handler getById() {
