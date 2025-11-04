@@ -1,5 +1,6 @@
 package app;
 
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -7,7 +8,13 @@ import static org.hamcrest.Matchers.*;
 
 public class CandidateApiTest extends ApiBaseSetup {
 
-
+    private String token() {
+        return given().contentType(ContentType.JSON)
+                .body("{\"username\":\"recruiter\",\"password\":\"pw\"}")
+                .post("/auth/login")
+                .then().statusCode(200)
+                .extract().path("token");
+    }
 
     @Test
     void listCandidates() {
@@ -16,19 +23,20 @@ public class CandidateApiTest extends ApiBaseSetup {
 
     @Test
     void filterBadCategory() {
-        given().when().get("/candidates?category=not-a-category")
-                .then().statusCode(400);
+        given().when().get("/candidates?category=not-a-category").then().statusCode(400);
     }
 
     @Test
     void deleteNotFound() {
-        given().when().delete("/candidates/{id}", 999999)
+        given().header("Authorization","Bearer "+token())
+                .when().delete("/candidates/{id}", 999999)
                 .then().statusCode(404);
     }
 
     @Test
     void updateNotFound() {
-        given().contentType("application/json")
+        given().header("Authorization","Bearer "+token())
+                .contentType(ContentType.JSON)
                 .body("{\"name\":\"X\",\"phone\":\"1\",\"education\":\"Y\"}")
                 .when().put("/candidates/{id}", 999999)
                 .then().statusCode(404);
@@ -36,13 +44,13 @@ public class CandidateApiTest extends ApiBaseSetup {
 
     @Test
     void getByIdNotFound() {
-        given().when().get("/candidates/{id}", 999999)
-                .then().statusCode(404);
+        given().when().get("/candidates/{id}", 999999).then().statusCode(404);
     }
 
     @Test
     void createCandidate() {
-        given().contentType("application/json")
+        given().header("Authorization","Bearer "+token())
+                .contentType(ContentType.JSON)
                 .body("{\"name\":\"Demo\",\"phone\":\"11111111\",\"education\":\"BSc\"}")
                 .post("/candidates")
                 .then().statusCode(201)
@@ -51,9 +59,10 @@ public class CandidateApiTest extends ApiBaseSetup {
 
     @Test
     void readCandidate() {
-        Integer id = given().contentType("application/json")
+        Integer id = given().header("Authorization","Bearer "+token())
+                .contentType(ContentType.JSON)
                 .body("{\"name\":\"Read\",\"phone\":\"11111112\",\"education\":\"BSc\"}")
-                .post("/candidates").then().extract().path("id");
+                .post("/candidates").then().statusCode(201).extract().path("id");
 
         given().get("/candidates/{id}", id)
                 .then().statusCode(200)
@@ -62,11 +71,13 @@ public class CandidateApiTest extends ApiBaseSetup {
 
     @Test
     void updateCandidate() {
-        Integer id = given().contentType("application/json")
+        Integer id = given().header("Authorization","Bearer "+token())
+                .contentType(ContentType.JSON)
                 .body("{\"name\":\"Original\",\"phone\":\"11111113\",\"education\":\"EK-Datamatikker\"}")
-                .post("/candidates").then().extract().path("id");
+                .post("/candidates").then().statusCode(201).extract().path("id");
 
-        given().contentType("application/json")
+        given().header("Authorization","Bearer "+token())
+                .contentType(ContentType.JSON)
                 .body("{\"name\":\"Updated\",\"phone\":\"22222222\",\"education\":\"EK-Datamatikker\"}")
                 .put("/candidates/{id}", id)
                 .then().statusCode(200)
@@ -75,11 +86,13 @@ public class CandidateApiTest extends ApiBaseSetup {
 
     @Test
     void deleteCandidate() {
-        Integer id = given().contentType("application/json")
+        Integer id = given().header("Authorization","Bearer "+token())
+                .contentType(ContentType.JSON)
                 .body("{\"name\":\"Delete\",\"phone\":\"11111114\",\"education\":\"EK-Datamatikker\"}")
-                .post("/candidates").then().extract().path("id");
+                .post("/candidates").then().statusCode(201).extract().path("id");
 
-        given().delete("/candidates/{id}", id)
+        given().header("Authorization","Bearer "+token())
+                .delete("/candidates/{id}", id)
                 .then().statusCode(204);
     }
 
@@ -96,14 +109,17 @@ public class CandidateApiTest extends ApiBaseSetup {
 
     @Test
     void linkSkillOk() {
-        Integer cid = given().contentType("application/json")
+        Integer cid = given().header("Authorization","Bearer "+token())
+                .contentType(ContentType.JSON)
                 .body("{\"name\":\"Link\",\"phone\":\"33333333\",\"education\":\"BSc\"}")
-                .post("/candidates").then().extract().path("id");
+                .post("/candidates").then().statusCode(201).extract().path("id");
 
         Integer sid = given().get("/candidates").then().extract()
                 .path("find { it.skills && it.skills.size() > 0 }.skills[0].id");
 
-        given().put("/candidates/{cid}/skills/{sid}", cid, sid).then().statusCode(204);
+        given().header("Authorization","Bearer "+token())
+                .put("/candidates/{cid}/skills/{sid}", cid, sid)
+                .then().statusCode(204);
 
         given().get("/candidates/{id}", cid)
                 .then().statusCode(200)
@@ -112,7 +128,9 @@ public class CandidateApiTest extends ApiBaseSetup {
 
     @Test
     void linkSkillNotFound() {
-        given().put("/candidates/{cid}/skills/{sid}", 999999, 1).then().statusCode(404);
+        given().header("Authorization","Bearer "+token())
+                .put("/candidates/{cid}/skills/{sid}", 999999, 1)
+                .then().statusCode(404);
     }
 
     @Test
@@ -121,5 +139,4 @@ public class CandidateApiTest extends ApiBaseSetup {
                 .then().statusCode(200)
                 .body("[0].skills.find { it.category == 'DB' }.category", equalTo("DB"));
     }
-
 }
