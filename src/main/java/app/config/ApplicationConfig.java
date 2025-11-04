@@ -44,7 +44,11 @@ public class ApplicationConfig {
             String m = ctx.method().toString();
 
             boolean isPublic =
-                    p.startsWith(base + "/auth") ||
+                    p.equals(base) ||
+                            p.equals(base + "/") ||
+                            p.equals("/") ||
+                            p.equals(base + "/routes") ||
+                            p.startsWith(base + "/auth") ||
                             ("GET".equals(m) && p.startsWith(base + "/public")) ||
                             ("GET".equals(m) && (p.equals(base + "/candidates") || p.startsWith(base + "/candidates/"))) ||
                             ("GET".equals(m) && p.startsWith(base + "/reports"));
