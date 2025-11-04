@@ -43,8 +43,8 @@ public class Populator {
             em.persist(javalin);
 
             Candidate marcus = Candidate.builder().name("Marcus Forsberg").phone("123456789").education("EK Datamatiker 3 SEM").build();
-            Candidate victor = Candidate.builder().name("Bob Hansen").phone("987654321").education("EK Datamatiker 3 SEM").build();
-            Candidate georgios = Candidate.builder().name("Clara Nielsen").phone("987612345").education("EK Datamatiker 3 SEM").build();
+            Candidate victor = Candidate.builder().name("Victor Forsberg").phone("987654321").education("EK Datamatiker 3 SEM").build();
+            Candidate georgios = Candidate.builder().name("Georgios Papageorgiou").phone("987612345").education("EK Datamatiker 3 SEM").build();
 
             em.persist(marcus);
             em.persist(victor);

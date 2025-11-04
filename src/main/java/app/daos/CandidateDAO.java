@@ -1,7 +1,10 @@
 package app.daos;
 
 import app.daos.interfaces.IDAO;
-import app.entities.*;
+import app.entities.Candidate;
+import app.entities.CandidateSkill;
+import app.entities.CandidateSkillId;
+import app.entities.Skill;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -25,13 +28,24 @@ public class CandidateDAO implements IDAO<Candidate, Integer> {
 
     public Candidate findById(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
-            return em.find(Candidate.class, id);
+            List<Candidate> list = em.createQuery(
+                            "SELECT c FROM Candidate c " +
+                                    "LEFT JOIN FETCH c.candidateSkills cs " +
+                                    "LEFT JOIN FETCH cs.skill " +
+                                    "WHERE c.id = :id", Candidate.class)
+                    .setParameter("id", id)
+                    .getResultList();
+            return list.isEmpty() ? null : list.get(0);
         }
     }
 
     public List<Candidate> getAll() {
         try (EntityManager em = emf.createEntityManager()) {
-            return em.createQuery("SELECT c FROM Candidate c", Candidate.class).getResultList();
+            return em.createQuery(
+                            "SELECT DISTINCT c FROM Candidate c " +
+                                    "LEFT JOIN FETCH c.candidateSkills cs " +
+                                    "LEFT JOIN FETCH cs.skill", Candidate.class)
+                    .getResultList();
         }
     }
 

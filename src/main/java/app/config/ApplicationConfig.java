@@ -42,7 +42,14 @@ public class ApplicationConfig {
             String base = ctx.contextPath();
             String p = ctx.path();
 
-            boolean isPublic = p.equals(base + "/") || p.equals(base + "/routes") || p.startsWith(base + "/auth/") || p.startsWith(base + "/public/");
+            //Add public endpoints here
+            boolean isPublic =
+                    p.equals(base + "/") ||
+                            p.equals(base + "/routes") ||
+                            p.startsWith(base + "/auth") ||
+                            p.startsWith(base + "/public") ||
+                            p.equals(base + "/candidates") ||
+                            p.startsWith(base + "/candidates/");
 
             if (isPublic) return;
 
