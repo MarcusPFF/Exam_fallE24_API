@@ -1,0 +1,41 @@
+### 1) List candidates
+GET http://localhost:7070/api/candidates
+Accept: application/json
+
+### 2) Get a candidate by id
+GET http://localhost:7070/api/candidates/1
+Accept: application/json
+
+### 3) Create a candidate
+POST http://localhost:7070/api/candidates
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Demo User",
+  "phone": "44444444",
+  "education": "Demo demo demo"
+}
+
+### 4) Update a candidate
+PUT http://localhost:7070/api/candidates/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Demo User Updated",
+  "phone": "44444445",
+  "education": "Demo demo demo demo"
+}
+
+### 5) Link an existing skill to a candidate
+PUT http://localhost:7070/api/candidates/1/skills/1
+Accept: application/json
+
+### 6) Delete a candidate
+DELETE http://localhost:7070/api/candidates/4
+Accept: application/json
+
+### 7) List again (to verify changes)
+GET http://localhost:7070/api/candidates
+Accept: application/json

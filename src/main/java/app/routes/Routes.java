@@ -1,6 +1,7 @@
 package app.routes;
 
 import app.controllers.AdminController;
+import app.controllers.CandidateController;
 import app.controllers.PublicController;
 import app.security.controllers.AuthController;
 import app.security.enums.Role;
@@ -15,6 +16,7 @@ public class Routes {
         var auth = new AuthController(emf);
         var pub = new PublicController();
         var admin = new AdminController(emf);
+        var candidate = new CandidateController(emf);
 
         return () -> {
             // Auth – (Anyone endpoints)
@@ -36,8 +38,14 @@ public class Routes {
                 get("/users", admin.users(), Role.ADMIN);
             });
 
-            // Will make path when i know the topic (Guest-guarded)
-            path("/something", () -> {
+            //Candidates (Role.anyone for now, security i will add later)
+            path("/candidates", () -> {
+                get("/", candidate.list(), Role.ANYONE);
+                get("/{id}", candidate.getById(), Role.ANYONE);
+                post("/", candidate.create(), Role.ANYONE);
+                put("/{id}", candidate.update(), Role.ANYONE);
+                delete("/{id}", candidate.delete(), Role.ANYONE);
+                put("/{candidateId}/skills/{skillId}", candidate.linkSkill(), Role.ANYONE);
             });
         };
     }
