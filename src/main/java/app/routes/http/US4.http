@@ -1,0 +1,15 @@
+### list all
+GET http://localhost:7070/api/candidates
+Accept: application/json
+
+### filter by category=DB
+GET http://localhost:7070/api/candidates?category=DB
+Accept: application/json
+
+### filter by category=PROG_LANG
+GET http://localhost:7070/api/candidates?category=PROG_LANG
+Accept: application/json
+
+### invalid category 400
+GET http://localhost:7070/api/candidates?category=notacategory
+Accept: application/json
