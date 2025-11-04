@@ -49,7 +49,8 @@ public class ApplicationConfig {
                             p.startsWith(base + "/auth") ||
                             p.startsWith(base + "/public") ||
                             p.equals(base + "/candidates") ||
-                            p.startsWith(base + "/candidates/");
+                            p.startsWith(base + "/candidates/") ||
+                            p.startsWith(base + "/reports/candidates/");
 
             if (isPublic) return;
 

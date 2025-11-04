@@ -3,6 +3,7 @@ package app.routes;
 import app.controllers.AdminController;
 import app.controllers.CandidateController;
 import app.controllers.PublicController;
+import app.controllers.ReportController;
 import app.security.controllers.AuthController;
 import app.security.enums.Role;
 import io.javalin.apibuilder.EndpointGroup;
@@ -17,6 +18,7 @@ public class Routes {
         var pub = new PublicController();
         var admin = new AdminController(emf);
         var candidate = new CandidateController(emf);
+        var reports = new ReportController(emf);
 
         return () -> {
             // Auth – (Anyone endpoints)
@@ -47,6 +49,11 @@ public class Routes {
                 delete("/{id}", candidate.delete(), Role.ANYONE);
                 put("/{candidateId}/skills/{skillId}", candidate.linkSkill(), Role.ANYONE);
             });
+
+            path("/reports", () -> {
+                get("/candidates/top-by-popularity", reports.topByPopularity(), Role.ANYONE);
+            });
+
         };
     }
 }
