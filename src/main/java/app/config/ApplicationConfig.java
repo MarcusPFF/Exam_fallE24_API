@@ -29,10 +29,25 @@ public class ApplicationConfig {
         Populator.seed(emf);
         Javalin server = Javalin.create(cfg -> {
             configuration(cfg);
+            //Cors for deployment preview
+            cfg.bundledPlugins.enableCors(cors -> {
+                cors.addRule(rule -> {
+                    rule.allowHost("https://marcuspff.com", "https://www.marcuspff.com", "http://localhost:7070");
+                });
+            });
+
             cfg.router.apiBuilder(new Routes().api(emf));
         });
 
-        server.get("/routes", RouteDocs.overviewHtml);
+        server.get("/routes", ctx -> {
+            String accept = String.valueOf(ctx.header("Accept")).toLowerCase();
+            if (accept.contains("application/json") || "json".equals(ctx.queryParam("format"))) {
+                ctx.contentType("application/json");
+                ctx.json(RouteDocs.overviewJson());
+            } else {
+                RouteDocs.overviewHtml.handle(ctx);
+            }
+        });
         server.get("/", ctx -> ctx.redirect(ctx.contextPath() + "/routes"));
 
         //Global JWT GUARD

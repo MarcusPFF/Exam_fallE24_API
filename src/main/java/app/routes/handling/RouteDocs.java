@@ -73,6 +73,26 @@ public final class RouteDocs {
         ApiBuilder.delete(path, guarded(h, roles));
     }
 
+    // ---- JSON Overview (til /api/routes eller /api/routes.json) ----
+    public static List<Map<String, Object>> overviewJson() {
+        List<RouteEntry> routes = ROUTES.stream()
+                .sorted(Comparator.comparing(RouteEntry::path).thenComparing(RouteEntry::method))
+                .toList();
+
+        List<Map<String, Object>> out = new ArrayList<>(routes.size());
+        for (RouteEntry r : routes) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("method", r.method());
+            m.put("path", r.path()); // behold r.path() uden contextPath; UI prepender selv
+            List<String> roles = (r.roles() == null) ? List.of() : r.roles();
+            m.put("roles", roles);
+            m.put("public", roles.stream().anyMatch(s -> "ANYONE".equalsIgnoreCase(s)));
+            // m.put("desc", ""); // tilføj hvis du senere vil have beskrivelser
+            out.add(m);
+        }
+        return out;
+    }
+
     // ---- Pretty Overview Page (/api/routes) ----
     public static Handler overviewHtml = ctx -> {
         final String ctxBase = Optional.ofNullable(ctx.contextPath()).orElse(""); // "/api"
