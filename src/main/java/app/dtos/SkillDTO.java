@@ -10,6 +10,9 @@ import lombok.*;
 public class SkillDTO {
     private Integer id;
     private String name;
+    private String slug;
     private SkillCategory category;
     private String description;
+    private Integer popularityScore;
+    private Integer averageSalary;
 }

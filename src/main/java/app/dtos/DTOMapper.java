@@ -19,7 +19,7 @@ public final class DTOMapper {
 
     public static SkillDTO toSkillDTO(Skill e) {
         if (e == null) return null;
-        return new SkillDTO(e.getId(), e.getName(), e.getCategory(), e.getDescription());
+        return new SkillDTO(e.getId(), e.getName(), e.getSlug(), e.getCategory(), e.getDescription(), null, null);
     }
 
     public static List<SkillDTO> toSkillDTOs(List<Skill> entities) {

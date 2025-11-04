@@ -26,20 +26,22 @@ public class Populator {
 
             em.getTransaction().begin();
 
-            Skill java = Skill.builder().name("Java").category(SkillCategory.PROG_LANG).description("Number-one-language").build();
-            Skill postgres = Skill.builder().name("PostgreSQL").category(SkillCategory.DB).description("Make-database-tables").build();
-            Skill docker = Skill.builder().name("Docker").category(SkillCategory.DEVOPS).description("Container platform").build();
-            Skill react = Skill.builder().name("React").category(SkillCategory.FRONTEND).description("Frontend library").build();
-            Skill junit = Skill.builder().name("JUnit").category(SkillCategory.TESTING).description("Testing framework").build();
-            Skill tenserflow = Skill.builder().name("TensorFlow").category(SkillCategory.DATA).description("Data science, analytics, and machine learning tools").build();
-            Skill javalin = Skill.builder().name("Javalin").category(SkillCategory.FRAMEWORK).description("Java application framework").build();
+            //US-5 with .slug update
+            Skill java = Skill.builder().name("Java").slug("java").category(SkillCategory.PROG_LANG).description("Number-one-language").build();
+            Skill postgres = Skill.builder().name("PostgreSQL").slug("postgresql").category(SkillCategory.DB).description("Make-database-tables").build();
+            Skill docker = Skill.builder().name("Docker").slug("docker").category(SkillCategory.DEVOPS).description("Container platform").build();
+            Skill react = Skill.builder().name("React").slug("react").category(SkillCategory.FRONTEND).description("Frontend library").build();
+            Skill junit = Skill.builder().name("JUnit").slug("junit").category(SkillCategory.TESTING).description("Testing framework").build();
+            Skill tensorflow = Skill.builder().name("TensorFlow").slug("tensorflow").category(SkillCategory.DATA).description("Data science, analytics, and machine learning tools").build();
+            Skill javalin = Skill.builder().name("Javalin").slug("javalin").category(SkillCategory.FRAMEWORK).description("Java application framework").build();
+
 
             em.persist(java);
             em.persist(postgres);
             em.persist(docker);
             em.persist(react);
             em.persist(junit);
-            em.persist(tenserflow);
+            em.persist(tensorflow);
             em.persist(javalin);
 
             Candidate marcus = Candidate.builder().name("Marcus Forsberg").phone("123456789").education("EK Datamatiker 3 SEM").build();
@@ -60,7 +62,7 @@ public class Populator {
             link(em, victor, postgres);
             link(em, victor, docker);
 
-            link(em, georgios, tenserflow);
+            link(em, georgios, tensorflow);
             link(em, georgios, postgres);
 
             em.getTransaction().commit();
