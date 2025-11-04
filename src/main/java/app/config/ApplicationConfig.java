@@ -61,7 +61,7 @@ public class ApplicationConfig {
 
             app.security.enums.Role role = JwtUtil.getRole(token);
             ctx.attribute("jwt.user", JwtUtil.getUsername(token));
-            ctx.attribute("jwt.role", role.name());
+            ctx.attribute("jwt.role", role);
 
             if (p.startsWith(base + "/candidates") && !"GET".equals(m) && role != app.security.enums.Role.RECRUITER)
                 throw new ApiException(403, "Forbidden");
