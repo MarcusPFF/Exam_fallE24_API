@@ -3,18 +3,12 @@ package app.dtos;
 import app.entities.Candidate;
 import app.entities.CandidateSkill;
 import app.entities.Skill;
-import app.entities.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class DTOMapper {
     private DTOMapper() {
-    }
-
-    public static UserDTO toUserDTO(User e) {
-        if (e == null) return null;
-        return new UserDTO(e.getId(), e.getUsername(), e.getRole());
     }
 
     public static SkillDTO toSkillDTO(Skill e) {

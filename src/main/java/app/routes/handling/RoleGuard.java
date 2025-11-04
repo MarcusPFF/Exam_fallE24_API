@@ -16,7 +16,7 @@ public final class RoleGuard {
         throw new ForbiddenResponse("Forbidden");
     }
 
-    public static void requireAdmin(Context ctx) {
-        require(ctx, Role.ADMIN);
+    public static void requireRecruit(Context ctx) {
+        require(ctx, Role.RECRUITER);
     }
 }

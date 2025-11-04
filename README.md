@@ -1,24 +1,26 @@
-# App
+# Candidate Matcher Application
 
 
 ## Description
-
+Exam project
 
 ## Endpoints & Role Access
 - http://localhost:7070/api/routes
-
+- https://candidate.marcuspff.com/api/routes
 
 ### Public Endpoints (No Auth Required)
-- `GET /api/auth/healthcheck` - Check API status
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - Register new user
-- `GET /api/public/info` - API information
-- 
-### Guest User Endpoints
-
-
-### Admin Only Endpoints
-- `GET /api/admin/users` - List all users
+	•	GET /auth/healthcheck — healthcheck
+	•	POST /auth/login — returns a JWT (role: RECRUITER)
+	•	GET /public/info — app info
+	•	GET /candidates — list candidates
+	•	GET /candidates/{id} — candidate details 
+	•	GET /candidates?category={category} — filter by skill category
+	•	GET /reports/candidates/top-by-popularity — top candidate by avg
+### Recruit  Endpoints
+	•	POST /candidates — create candidate
+	•	PUT /candidates/{id} — update candidate
+	•	DELETE /candidates/{id} — delete candidate
+	•	PUT /candidates/{candidateId}/skills/{skillId}
 
 ## Security
 
