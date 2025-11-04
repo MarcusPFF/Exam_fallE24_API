@@ -3,6 +3,7 @@
 *.class
 
 config.properties
+dependency-reduced-pom.xml
 
 # Log file
 *.log

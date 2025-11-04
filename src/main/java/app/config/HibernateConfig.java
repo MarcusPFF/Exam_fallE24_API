@@ -1,5 +1,8 @@
 package app.config;
 
+import app.entities.Candidate;
+import app.entities.CandidateSkill;
+import app.entities.Skill;
 import app.entities.User;
 import app.exceptions.ApiException;
 import app.utils.Utils;
@@ -46,6 +49,10 @@ public class HibernateConfig {
     // TODO: IMPORTANT: Add Entity classes here for them to be registered with Hibernate
     private static void getAnnotationConfiguration(Configuration configuration) {
         configuration.addAnnotatedClass(User.class);
+        configuration.addAnnotatedClass(Candidate.class);
+        configuration.addAnnotatedClass(Skill.class);
+        configuration.addAnnotatedClass(CandidateSkill.class);
+
     }
 
     private static EntityManagerFactory createEMF(boolean forTest) {
@@ -92,7 +99,7 @@ public class HibernateConfig {
         props.setProperty("hibernate.connection.username", System.getenv("DB_USERNAME"));
         props.setProperty("hibernate.connection.password", System.getenv("DB_PASSWORD"));
 
-        props.put("hibernate.hbm2ddl.auto", "update");
+        props.put("hibernate.hbm2ddl.auto", "create");
 
         return props;
     }
@@ -102,6 +109,8 @@ public class HibernateConfig {
         props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/" + DBName);
         props.put("hibernate.connection.username", "postgres");
         props.put("hibernate.connection.password", "postgres");
+        props.put("hibernate.archive.autodetection", "class");
+        props.put("hibernate.hbm2ddl.auto", "update"); //create-drop first setup, efter then update
         return props;
     }
 

@@ -26,7 +26,7 @@ public class ApplicationConfig {
 
     public static Javalin startServer(int port) {
         EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
-
+        Populator.seed(emf);
         Javalin server = Javalin.create(cfg -> {
             configuration(cfg);
             cfg.router.apiBuilder(new Routes().api(emf));
