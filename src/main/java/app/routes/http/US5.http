@@ -1,0 +1,3 @@
+### list all
+GET http://localhost:7070/api/candidates/1
+Accept: application/json

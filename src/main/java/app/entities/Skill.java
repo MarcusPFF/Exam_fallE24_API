@@ -22,6 +22,10 @@ public class Skill {
     @Column(nullable = false, unique = true)
     private String name;
 
+    //US-5
+    @Column(nullable = false, unique = true)
+    private String slug;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SkillCategory category;
