@@ -1,0 +1,77 @@
+### healthcheck (public)
+GET http://localhost:7070/api/auth/healthcheck
+Accept: application/json
+
+### public info (public)
+GET http://localhost:7070/api/public/info
+Accept: application/json
+
+### write without token -> 401
+POST http://localhost:7070/api/candidates
+Content-Type: application/json
+
+{
+  "name": "NoAuth",
+  "phone": "11111111",
+  "education": "BSc"
+}
+
+### write with invalid token -> 401
+POST http://localhost:7070/api/candidates
+Authorization: Bearer invalid.token.here
+Content-Type: application/json
+
+{
+  "name": "BadToken",
+  "phone": "22222222",
+  "education": "BSc"
+}
+
+### login -> capture token
+POST http://localhost:7070/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "recruiter",
+  "password": "pw"
+}
+
+> {%
+    const obj = JSON.parse(response.body);
+    client.global.set("token", obj.token);
+%}
+
+### create with token -> 201
+POST http://localhost:7070/api/candidates
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Secured",
+  "phone": "33333333",
+  "education": "BSc"
+}
+
+> {%
+    const obj = JSON.parse(response.body);
+    client.global.set("cid", obj.id);
+%}
+
+### update with token -> 200
+PUT http://localhost:7070/api/candidates/{{cid}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Secured-Updated",
+  "phone": "44444444",
+  "education": "MSc"
+}
+
+### delete with token -> 204
+DELETE http://localhost:7070/api/candidates/{{cid}}
+Authorization: Bearer {{token}}
+
+### list (public) -> 200
+GET http://localhost:7070/api/candidates
+Accept: application/json

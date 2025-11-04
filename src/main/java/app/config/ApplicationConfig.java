@@ -37,20 +37,17 @@ public class ApplicationConfig {
 
         //Global JWT GUARD
         server.before(ctx -> {
-            if ("OPTIONS".equals(ctx.method())) return;
+            if ("OPTIONS".equals(ctx.method().toString())) return;
 
             String base = ctx.contextPath();
             String p = ctx.path();
+            String m = ctx.method().toString();
 
-            //Add public endpoints here
             boolean isPublic =
-                    p.equals(base + "/") ||
-                            p.equals(base + "/routes") ||
-                            p.startsWith(base + "/auth") ||
-                            p.startsWith(base + "/public") ||
-                            p.equals(base + "/candidates") ||
-                            p.startsWith(base + "/candidates/") ||
-                            p.startsWith(base + "/reports/candidates/");
+                    p.startsWith(base + "/auth") ||
+                            ("GET".equals(m) && p.startsWith(base + "/public")) ||
+                            ("GET".equals(m) && (p.equals(base + "/candidates") || p.startsWith(base + "/candidates/"))) ||
+                            ("GET".equals(m) && p.startsWith(base + "/reports"));
 
             if (isPublic) return;
 
@@ -59,10 +56,15 @@ public class ApplicationConfig {
                 throw NotAuthorizedException.unauthorized("Missing or invalid Authorization header");
 
             String token = header.substring("Bearer ".length()).trim();
-            if (!JwtUtil.validateToken(token)) throw NotAuthorizedException.unauthorized("Invalid or expired token");
+            if (!JwtUtil.validateToken(token))
+                throw NotAuthorizedException.unauthorized("Invalid or expired token");
 
+            app.security.enums.Role role = JwtUtil.getRole(token);
             ctx.attribute("jwt.user", JwtUtil.getUsername(token));
-            ctx.attribute("jwt.role", JwtUtil.getRole(token));
+            ctx.attribute("jwt.role", role.name());
+
+            if (p.startsWith(base + "/candidates") && !"GET".equals(m) && role != app.security.enums.Role.RECRUITER)
+                throw new ApiException(403, "Forbidden");
         });
 
         server.exception(ValidationException.class, (e, ctx) -> ctx.status(400).json(Utils.convertToJsonMessage(ctx, "error", e.getMessage())));

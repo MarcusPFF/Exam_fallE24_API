@@ -1,82 +1,58 @@
 package app.security.controllers;
 
-import app.entities.User;
 import app.security.enums.Role;
 import app.security.utils.JwtUtil;
-import app.services.UserService;
+import app.utils.Utils;
 import io.javalin.http.Handler;
 import jakarta.persistence.EntityManagerFactory;
 
 import java.util.Map;
 
 public class AuthController {
-
-    private final UserService userService;
+    private final String user;
+    private final String pass;
 
     public AuthController(EntityManagerFactory emf) {
-        this.userService = new UserService(emf);
+        String u, p;
+        try {
+            u = Utils.getPropertyValue("AUTH_USER", "config.properties");
+        } catch (Exception e) {
+            u = null;
+        }
+        try {
+            p = Utils.getPropertyValue("AUTH_PASSWORD", "config.properties");
+        } catch (Exception e) {
+            p = null;
+        }
+        if (u == null || u.isBlank()) u = "recruiter";
+        if (p == null || p.isBlank()) p = "pw";
+        this.user = u;
+        this.pass = p;
     }
 
-    // /auth/healthcheck
     public Handler health() {
         return ctx -> ctx.json(Map.of("msg", "API is up and running"));
     }
 
-    // /auth/register
     public Handler register() {
-        return ctx -> {
-            Map<String, Object> body = ctx.bodyAsClass(Map.class);
-            String username = (String) body.get("username");
-            String password = (String) body.get("password");
-            String roleString = (String) body.getOrDefault("role", "GUEST");
-
-            if (username == null || password == null) {
-                ctx.status(400).json(Map.of("error", "username and password are required"));
-                return;
-            }
-
-            Role role;
-            try {
-                role = Role.valueOf(roleString.toUpperCase());
-            } catch (Exception ignored) {
-                role = Role.GUEST;
-            }
-
-            User user = userService.registerUser(username, password, role);
-            ctx.json(Map.of(
-                    "message", "User registered",
-                    "username", user.getUsername(),
-                    "role", user.getRole().name()
-            ));
-        };
+        return ctx -> ctx.status(404).json(Map.of("error", "Registration is disabled"));
     }
 
-    // /auth/login
     public Handler login() {
         return ctx -> {
             Map<String, Object> body = ctx.bodyAsClass(Map.class);
-            String username = (String) body.get("username");
-            String password = (String) body.get("password");
-
-            if (username == null || password == null) {
+            String u = body == null ? null : String.valueOf(body.get("username"));
+            String p = body == null ? null : String.valueOf(body.get("password"));
+            if (u == null || p == null) {
                 ctx.status(400).json(Map.of("error", "username and password are required"));
                 return;
             }
-
-            boolean valid = userService.validateUser(username, password);
-            if (!valid) {
+            if (!user.equals(u) || !pass.equals(p)) {
                 ctx.status(401).json(Map.of("error", "Invalid username or password"));
                 return;
             }
-
-            User user = userService.findByUsername(username);
-            String token = JwtUtil.generateToken(user);
-
-            ctx.json(Map.of(
-                    "token", token,
-                    "username", username,
-                    "role", user.getRole().name()
-            ));
+            String token = JwtUtil.generateToken(u, Role.RECRUITER);
+            ctx.json(Map.of("token", token, "username", u, "role", Role.RECRUITER.name()));
         };
     }
 }
