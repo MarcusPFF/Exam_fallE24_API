@@ -56,7 +56,8 @@ public class CandidateController {
     public Handler update() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
-            if (candidates.findById(id) == null) throw new ApiException(404, "Candidate not found");
+            if (candidates.findById(id) == null)
+                throw new ApiException(404, "Candidate not found");
             CandidateDTO in = ctx.bodyAsClass(CandidateDTO.class);
             CandidateDTO out = candidates.update(id, in);
             ctx.json(out);
