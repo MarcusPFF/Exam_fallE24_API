@@ -11,7 +11,7 @@ public class PublicController {
     public Handler info() {
         return ctx -> ctx.json(Map.of(
                 "name", "ExamAPI",
-                "version", "1.0",
+                "version", "1.1",
                 "time", Instant.now().toString()
         ));
     }

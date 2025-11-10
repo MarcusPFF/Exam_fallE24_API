@@ -38,13 +38,14 @@ public class ApplicationConfig {
 
             cfg.router.apiBuilder(new Routes().api(emf));
         });
-
+        //Also for deployment preview
         server.get("/routes", ctx -> {
             String accept = String.valueOf(ctx.header("Accept")).toLowerCase();
             if (accept.contains("application/json") || "json".equals(ctx.queryParam("format"))) {
                 ctx.contentType("application/json");
                 ctx.json(RouteDocs.overviewJson());
             } else {
+                //Custom route overview
                 RouteDocs.overviewHtml.handle(ctx);
             }
         });
@@ -86,10 +87,9 @@ public class ApplicationConfig {
                 throw new ApiException(403, "Forbidden");
         });
 
+        //Exception handling abbreviated with lambda
         server.exception(ValidationException.class, (e, ctx) -> ctx.status(400).json(Utils.convertToJsonMessage(ctx, "error", e.getMessage())));
         server.exception(NotAuthorizedException.class, (e, ctx) -> ctx.status(e.getStatus() == 0 ? 401 : e.getStatus()).json(Utils.convertToJsonMessage(ctx, "error", e.getMessage())));
-        server.exception(ApiException.class, ApplicationConfig::apiExceptionHandler);
-        server.exception(Exception.class, ApplicationConfig::generalExceptionHandler);
 
         server.after(ApplicationConfig::afterRequest);
 
@@ -108,16 +108,5 @@ public class ApplicationConfig {
     private static void afterRequest(Context ctx) {
         String info = ctx.method() + " " + ctx.path();
         logger.info("Request {} - {} -> {}", counter++, info, ctx.status());
-    }
-
-    private static void generalExceptionHandler(Exception e, Context ctx) {
-        logger.error("Unhandled exception", e);
-        ctx.status(500).json(Utils.convertToJsonMessage(ctx, "error", e.getMessage()));
-    }
-
-    public static void apiExceptionHandler(ApiException e, Context ctx) {
-        ctx.status(e.getStatusCode());
-        logger.warn("API exception {}: {}", e.getStatusCode(), e.getMessage());
-        ctx.json(Utils.convertToJsonMessage(ctx, "warning", e.getMessage()));
     }
 }

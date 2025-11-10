@@ -13,11 +13,18 @@ public final class DTOMapper {
 
     public static SkillDTO toSkillDTO(Skill e) {
         if (e == null) return null;
-        return new SkillDTO(e.getId(), e.getName(), e.getSlug(), e.getCategory(), e.getDescription(), null, null);
+        return new SkillDTO(e.getId(),
+                e.getName(),
+                e.getSlug(),
+                e.getCategory(),
+                e.getDescription(),
+                null,
+                null);
     }
 
     public static List<SkillDTO> toSkillDTOs(List<Skill> entities) {
-        if (entities == null || entities.isEmpty()) return List.of();
+        if (entities == null || entities.isEmpty())
+            return List.of();
         List<SkillDTO> out = new ArrayList<>(entities.size());
         for (Skill s : entities) out.add(toSkillDTO(s));
         return out;
@@ -37,7 +44,8 @@ public final class DTOMapper {
     public static List<CandidateDTO> toCandidateDTOs(List<Candidate> entities) {
         if (entities == null || entities.isEmpty()) return List.of();
         List<CandidateDTO> out = new ArrayList<>(entities.size());
-        for (Candidate c : entities) out.add(toCandidateDTO(c));
+        for (Candidate c : entities)
+            out.add(toCandidateDTO(c));
         return out;
     }
 }

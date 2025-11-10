@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//JPA Annotationer
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,7 +28,8 @@ public class Candidate {
     @Column(nullable = false)
     private String education;
 
-    @Builder.Default //using builder default from lombok
+    @Builder.Default
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    //CascadeType.All for the creation and to remove the candidate associated skills.
     private List<CandidateSkill> candidateSkills = new ArrayList<>();
 }

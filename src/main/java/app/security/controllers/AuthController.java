@@ -24,8 +24,10 @@ public class AuthController {
         } catch (Exception e) {
             p = null;
         }
-        if (u == null || u.isBlank()) u = "recruiter";
-        if (p == null || p.isBlank()) p = "pw";
+        if (u == null || u.isBlank())
+            u = "recruiter";
+        if (p == null || p.isBlank())
+            p = "pw";
         this.user = u;
         this.pass = p;
     }

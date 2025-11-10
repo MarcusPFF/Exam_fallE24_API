@@ -27,6 +27,7 @@ public class Populator {
             em.getTransaction().begin();
 
             //US-5 with .slug update
+            //Building skills
             Skill java = Skill.builder().name("Java").slug("java").category(SkillCategory.PROG_LANG).description("Number-one-language").build();
             Skill postgres = Skill.builder().name("PostgreSQL").slug("postgresql").category(SkillCategory.DB).description("Make-database-tables").build();
             Skill docker = Skill.builder().name("Docker").slug("docker").category(SkillCategory.DEVOPS).description("Container platform").build();
@@ -35,7 +36,7 @@ public class Populator {
             Skill tensorflow = Skill.builder().name("TensorFlow").slug("tensorflow").category(SkillCategory.DATA).description("Data science, analytics, and machine learning tools").build();
             Skill javalin = Skill.builder().name("Javalin").slug("javalin").category(SkillCategory.FRAMEWORK).description("Java application framework").build();
 
-
+            //Persist to database
             em.persist(java);
             em.persist(postgres);
             em.persist(docker);
@@ -44,15 +45,18 @@ public class Populator {
             em.persist(tensorflow);
             em.persist(javalin);
 
+            //Filling up candidate entities with data
             Candidate marcus = Candidate.builder().name("Marcus Forsberg").phone("123456789").education("EK Datamatiker 3 SEM").build();
             Candidate victor = Candidate.builder().name("Victor Forsberg").phone("987654321").education("EK Datamatiker 3 SEM").build();
             Candidate georgios = Candidate.builder().name("Georgios Papageorgiou").phone("987612345").education("EK Datamatiker 3 SEM").build();
 
+            //Telling JPA that which object should be saved in the database
             em.persist(marcus);
             em.persist(victor);
             em.persist(georgios);
             em.flush();
 
+            //Linking candidate to skill
             link(em, marcus, java);
             link(em, marcus, react);
             link(em, marcus, junit);
@@ -65,6 +69,7 @@ public class Populator {
             link(em, georgios, tensorflow);
             link(em, georgios, postgres);
 
+            //Comitting to database.
             em.getTransaction().commit();
         }
     }

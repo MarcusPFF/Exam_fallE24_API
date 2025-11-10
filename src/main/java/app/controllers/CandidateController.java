@@ -29,16 +29,18 @@ public class CandidateController {
                 var category = app.entities.enums.SkillCategory.valueOf(cat.toUpperCase());
                 ctx.json(candidates.getByCategory(category));
             } catch (IllegalArgumentException e) {
-                throw new app.exceptions.ApiException(400, "Invalid category");
+                throw new app.exceptions.ApiException(400, "invalid category");
             }
         };
     }
 
+    //CRUD (Create, Read, Update, Delete
     public Handler getById() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             CandidateDTO dto = candidates.findById(id);
-            if (dto == null) throw new ApiException(404, "Candidate not found");
+            if (dto == null)
+                throw new ApiException(404, "Candidate not found");
             ctx.json(dto);
         };
     }
@@ -64,7 +66,8 @@ public class CandidateController {
     public Handler delete() {
         return ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
-            if (candidates.findById(id) == null) throw new ApiException(404, "Candidate not found");
+            if (candidates.findById(id) == null)
+                throw new ApiException(404, "Candidate not found");
             candidates.delete(id);
             ctx.status(204);
         };
@@ -76,7 +79,8 @@ public class CandidateController {
             int skillId = Integer.parseInt(ctx.pathParam("skillId"));
             CandidateDTO c = candidates.findById(candidateId);
             SkillDTO s = skills.findById(skillId);
-            if (c == null || s == null) throw new ApiException(404, "Candidate or skill not found");
+            if (c == null || s == null)
+                throw new ApiException(404, "Candidate or skill not found");
             candidates.linkSkill(candidateId, skillId);
             ctx.status(204);
         };

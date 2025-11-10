@@ -32,14 +32,17 @@ public class CandidateService {
     //US-5
     public CandidateDTO findById(int id) {
         Candidate c = dao.findById(id);
-        if (c == null) return null;
+        if (c == null)
+            return null;
 
         CandidateDTO dto = DTOMapper.toCandidateDTO(c);
         List<SkillDTO> skills = dto.getSkills();
-        if (skills == null || skills.isEmpty()) return dto;
+        if (skills == null || skills.isEmpty())
+            return dto;
 
         FetchSlugsFromApi.SkillStatsResponse res = new FetchSlugsFromApi(new FetchTools()).FetchSlugsFromUrl();
-        if (res == null || res.data == null || res.data.isEmpty()) return dto;
+        if (res == null || res.data == null || res.data.isEmpty())
+            return dto;
 
         for (SkillDTO s : skills) {
             String slug = s.getSlug();
