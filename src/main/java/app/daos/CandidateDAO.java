@@ -17,6 +17,7 @@ public class CandidateDAO implements IDAO<Candidate, Integer> {
         this.emf = emf;
     }
 
+    //CRUD (Create, Read, Update, Delete
     public Candidate create(Candidate entity) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
@@ -29,8 +30,7 @@ public class CandidateDAO implements IDAO<Candidate, Integer> {
     public Candidate findById(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
             List<Candidate> list = em.createQuery(
-                            "SELECT c FROM Candidate c " +
-                                    "LEFT JOIN FETCH c.candidateSkills cs " +
+                            "SELECT c FROM Candidate c " + "LEFT JOIN FETCH c.candidateSkills cs " +
                                     "LEFT JOIN FETCH cs.skill " +
                                     "WHERE c.id = :id", Candidate.class)
                     .setParameter("id", id)
@@ -42,8 +42,7 @@ public class CandidateDAO implements IDAO<Candidate, Integer> {
     public List<Candidate> getAll() {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
-                            "SELECT DISTINCT c FROM Candidate c " +
-                                    "LEFT JOIN FETCH c.candidateSkills cs " +
+                            "SELECT DISTINCT c FROM Candidate c " + "LEFT JOIN FETCH c.candidateSkills cs " +
                                     "LEFT JOIN FETCH cs.skill", Candidate.class)
                     .getResultList();
         }
@@ -62,7 +61,8 @@ public class CandidateDAO implements IDAO<Candidate, Integer> {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             Candidate ref = em.find(Candidate.class, id);
-            if (ref != null) em.remove(ref);
+            if (ref != null)
+                em.remove(ref);
             em.getTransaction().commit();
         }
     }
@@ -91,7 +91,6 @@ public class CandidateDAO implements IDAO<Candidate, Integer> {
                 candidate.getCandidateSkills().add(cs);
                 skill.getCandidateSkills().add(cs);
             }
-
             em.getTransaction().commit();
         }
     }

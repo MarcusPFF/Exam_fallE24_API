@@ -14,6 +14,7 @@ public class SkillDAO implements IDAO<Skill, Integer> {
         this.emf = emf;
     }
 
+    //CRUD (Create, Read, Update, Delete
     public Skill create(Skill entity) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
@@ -48,7 +49,8 @@ public class SkillDAO implements IDAO<Skill, Integer> {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             Skill ref = em.find(Skill.class, id);
-            if (ref != null) em.remove(ref);
+            if (ref != null)
+                em.remove(ref);
             em.getTransaction().commit();
         }
     }

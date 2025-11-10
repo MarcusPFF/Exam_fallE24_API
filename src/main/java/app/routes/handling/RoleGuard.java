@@ -9,7 +9,8 @@ public final class RoleGuard {
 
     public static void require(Context ctx, Role... allowed) {
         Role role = ctx.attribute("jwt.role");
-        if (role == null) throw new ForbiddenResponse("Missing role");
+        if (role == null)
+            throw new ForbiddenResponse("Missing role");
         for (Role r : allowed) {
             if (r == role) return; // allowed
         }

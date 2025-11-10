@@ -3,6 +3,7 @@ package app.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+//JPA Annotationer
 @Getter
 @Setter
 @NoArgsConstructor

@@ -27,6 +27,7 @@ public class ReportService {
         Integer bestId = null;
         double bestAvg = 0.0;
 
+        //Nested for loop that counts how many skills each candidate has, and gets their average score.
         for (Candidate c : candidates) {
             double sum = 0.0;
             int count = 0;
@@ -35,7 +36,8 @@ public class ReportService {
                 for (CandidateSkill cs : c.getCandidateSkills()) {
                     Skill s = cs.getSkill();
                     String slug = s == null ? null : s.getSlug();
-                    if (slug == null || slug.isBlank()) continue;
+                    if (slug == null || slug.isBlank())
+                        continue;
                     String key = slug.toLowerCase();
 
                     for (SkillData d : data) {

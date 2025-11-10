@@ -29,10 +29,26 @@ public class ApplicationConfig {
         Populator.seed(emf);
         Javalin server = Javalin.create(cfg -> {
             configuration(cfg);
+            //Cors for deployment preview
+            cfg.bundledPlugins.enableCors(cors -> {
+                cors.addRule(rule -> {
+                    rule.allowHost("https://marcuspff.com", "https://www.marcuspff.com", "http://localhost:7070");
+                });
+            });
+
             cfg.router.apiBuilder(new Routes().api(emf));
         });
-
-        server.get("/routes", RouteDocs.overviewHtml);
+        //Also for deployment preview
+        server.get("/routes", ctx -> {
+            String accept = String.valueOf(ctx.header("Accept")).toLowerCase();
+            if (accept.contains("application/json") || "json".equals(ctx.queryParam("format"))) {
+                ctx.contentType("application/json");
+                ctx.json(RouteDocs.overviewJson());
+            } else {
+                //Custom route overview
+                RouteDocs.overviewHtml.handle(ctx);
+            }
+        });
         server.get("/", ctx -> ctx.redirect(ctx.contextPath() + "/routes"));
 
         //Global JWT GUARD
@@ -44,7 +60,11 @@ public class ApplicationConfig {
             String m = ctx.method().toString();
 
             boolean isPublic =
-                    p.startsWith(base + "/auth") ||
+                    p.equals(base) ||
+                            p.equals(base + "/") ||
+                            p.equals("/") ||
+                            p.equals(base + "/routes") ||
+                            p.startsWith(base + "/auth") ||
                             ("GET".equals(m) && p.startsWith(base + "/public")) ||
                             ("GET".equals(m) && (p.equals(base + "/candidates") || p.startsWith(base + "/candidates/"))) ||
                             ("GET".equals(m) && p.startsWith(base + "/reports"));
@@ -61,18 +81,20 @@ public class ApplicationConfig {
 
             app.security.enums.Role role = JwtUtil.getRole(token);
             ctx.attribute("jwt.user", JwtUtil.getUsername(token));
-            ctx.attribute("jwt.role", role.name());
+            ctx.attribute("jwt.role", role);
 
             if (p.startsWith(base + "/candidates") && !"GET".equals(m) && role != app.security.enums.Role.RECRUITER)
                 throw new ApiException(403, "Forbidden");
         });
 
+        //Exception handling abbreviated with lambda
         server.exception(ValidationException.class, (e, ctx) -> ctx.status(400).json(Utils.convertToJsonMessage(ctx, "error", e.getMessage())));
         server.exception(NotAuthorizedException.class, (e, ctx) -> ctx.status(e.getStatus() == 0 ? 401 : e.getStatus()).json(Utils.convertToJsonMessage(ctx, "error", e.getMessage())));
         server.exception(ApiException.class, ApplicationConfig::apiExceptionHandler);
         server.exception(Exception.class, ApplicationConfig::generalExceptionHandler);
 
         server.after(ApplicationConfig::afterRequest);
+
 
         server.start(port);
         logger.info("Server started on http://localhost:{}{}", port, "/api");
