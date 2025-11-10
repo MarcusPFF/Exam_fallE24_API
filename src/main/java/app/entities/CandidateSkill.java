@@ -15,9 +15,6 @@ public class CandidateSkill {
     @EmbeddedId
     private CandidateSkillId id;
 
-    //FetchType.Lazy because we only need to get the relations, when we need them.
-    //candidates - why we only use Lazy, we only need the candidates loaded in.
-    //Candidates/{id} when we want to get the relations
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("candidateId")
     @JoinColumn(name = "candidate_id", nullable = false)

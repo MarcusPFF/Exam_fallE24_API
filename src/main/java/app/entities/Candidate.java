@@ -30,6 +30,5 @@ public class Candidate {
 
     @Builder.Default
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
-    //CascadeType.All for the creation and to remove the candidate associated skills.
     private List<CandidateSkill> candidateSkills = new ArrayList<>();
 }
